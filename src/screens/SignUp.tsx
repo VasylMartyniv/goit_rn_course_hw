@@ -9,8 +9,9 @@ import SectionTitle from '../components/SectionTitle';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import {StyleSheet, View} from 'react-native';
-import {theme} from '../styles/theme';
+import {Theme} from '../styles/theme';
 import {SCREEN_NAMES} from '../constants/routes.ts';
+import {useTheme} from '../state/ThemeContext.tsx';
 
 const SignUp = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -18,6 +19,8 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const {theme} = useTheme();
+  const styles = createStyles(theme);
 
   const handleSignUp = () => {
     navigation.navigate(SCREEN_NAMES.LOGIN);
@@ -67,19 +70,20 @@ const SignUp = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  formContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    marginTop: '30%',
-    alignItems: 'center',
-    padding: theme.spacing.lg,
-  },
-  footerButton: {
-    flexDirection: 'row',
-    marginTop: 'auto',
-    width: '100%',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    formContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      marginTop: '30%',
+      alignItems: 'center',
+      padding: theme.spacing.lg,
+    },
+    footerButton: {
+      flexDirection: 'row',
+      marginTop: 'auto',
+      width: '100%',
+    },
+  });
 
 export default SignUp;

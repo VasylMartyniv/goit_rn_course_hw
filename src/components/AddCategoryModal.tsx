@@ -6,10 +6,12 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {useTodo} from '../state/TodoContext';
 import CustomInput from './CustomInput';
 import CustomButton from './CustomButton';
-import {theme} from '../styles/theme';
+import {Theme} from '../styles/theme';
+import {useAppDispatch} from '../hooks/hooks.ts';
+import {addCategory} from '../state/categoriesSlice.ts';
+import {useTheme} from '../state/ThemeContext.tsx';
 
 interface AddCategoryModalProps {
   visible: boolean;
@@ -18,11 +20,13 @@ interface AddCategoryModalProps {
 
 const AddCategoryModal = ({visible, onClose}: AddCategoryModalProps) => {
   const [categoryName, setCategoryName] = useState('');
-  const {addCategory} = useTodo();
+  const dispatch = useAppDispatch();
+  const {theme} = useTheme();
+  const styles = createStyles(theme);
 
   const handleAddCategory = () => {
     if (categoryName.trim()) {
-      addCategory(categoryName.trim());
+      dispatch(addCategory(categoryName.trim()));
       setCategoryName('');
       onClose();
     }
@@ -68,38 +72,39 @@ const AddCategoryModal = ({visible, onClose}: AddCategoryModalProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.lg,
-    shadowColor: theme.colors.black,
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  title: {
-    fontSize: theme.typography.fontSize.lg,
-    fontFamily: theme.typography.fontFamily.bold,
-    marginBottom: theme.spacing.md,
-    color: theme.colors.neutral[900],
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  buttonStyle: {
-    width: theme.spacing.xxl * 2 + theme.spacing.xs,
-    marginLeft: theme.spacing.sm,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      width: '80%',
+      backgroundColor: theme.colors.backgroundLight,
+      borderRadius: theme.borderRadius.md,
+      padding: theme.spacing.lg,
+      shadowColor: theme.colors.black,
+      shadowOffset: {width: 0, height: 2},
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    title: {
+      fontSize: theme.typography.fontSize.lg,
+      fontFamily: theme.typography.fontFamily.bold,
+      marginBottom: theme.spacing.md,
+      color: theme.colors.text,
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    buttonStyle: {
+      width: theme.spacing.xxl * 2 + theme.spacing.xs,
+      marginLeft: theme.spacing.sm,
+    },
+  });
 
 export default AddCategoryModal;

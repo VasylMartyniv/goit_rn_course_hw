@@ -1,8 +1,11 @@
 import React, {useState} from 'react';
 import {Modal, StyleSheet, Text, View} from 'react-native';
-import {useTodo} from '../state/TodoContext';
 import CustomInput from './CustomInput';
 import CustomButton from './CustomButton';
+import {useAppDispatch} from '../hooks/hooks.ts';
+import {addTodo} from '../state/todosSlice.ts';
+import {useTheme} from '../state/ThemeContext.tsx';
+import {Theme} from '../styles/theme.ts';
 
 interface AddTodoModalProps {
   visible: boolean;
@@ -12,11 +15,13 @@ interface AddTodoModalProps {
 
 const AddTodoModal = ({visible, onClose, categoryId}: AddTodoModalProps) => {
   const [todoTitle, setTodoTitle] = useState('');
-  const {addTodo} = useTodo();
+  const dispatch = useAppDispatch();
+  const {theme} = useTheme();
+  const styles = createStyles(theme);
 
   const handleAddTodo = () => {
     if (todoTitle.trim()) {
-      addTodo(todoTitle.trim(), categoryId);
+      dispatch(addTodo({title: todoTitle.trim(), categoryId}));
       setTodoTitle('');
       onClose();
     }
@@ -53,34 +58,36 @@ const AddTodoModal = ({visible, onClose, categoryId}: AddTodoModalProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {width: 0, height: -2},
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 10,
-    gap: 10,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: theme.colors.backgroundLight,
+      borderTopLeftRadius: 15,
+      borderTopRightRadius: 15,
+      padding: 20,
+      shadowColor: '#000',
+      shadowOffset: {width: 0, height: -2},
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+      elevation: 5,
+    },
+    title: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 15,
+      color: theme.colors.text,
+    },
+    buttonContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginBottom: 10,
+      gap: 10,
+    },
+  });
 
 export default AddTodoModal;

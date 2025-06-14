@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, TextInput} from 'react-native';
-import {theme} from '../styles/theme';
+import {Theme} from '../styles/theme';
+import {useTheme} from '../state/ThemeContext.tsx';
 
 interface CustomInputProps {
   placeholder: string;
@@ -23,6 +24,8 @@ const CustomInput = ({
   style,
   autoFocus = false,
 }: CustomInputProps) => {
+  const {theme} = useTheme();
+  const styles = createStyles(theme);
   return (
     <TextInput
       style={[styles.input, style]}
@@ -33,23 +36,26 @@ const CustomInput = ({
       keyboardType={keyboardType}
       autoCapitalize={autoCapitalize}
       autoFocus={autoFocus}
+      placeholderTextColor={theme.colors.borderColor}
     />
   );
 };
 
-const styles = StyleSheet.create({
-  input: {
-    width: '100%',
-    height: theme.spacing.xxl + theme.spacing.xs,
-    borderWidth: 1,
-    borderColor: theme.colors.neutral[300],
-    borderRadius: theme.borderRadius.lg,
-    marginBottom: theme.spacing.md,
-    paddingHorizontal: theme.spacing.lg,
-    backgroundColor: theme.colors.white,
-    fontSize: theme.typography.fontSize.md,
-    fontFamily: theme.typography.fontFamily.regular,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    input: {
+      width: '100%',
+      height: theme.spacing.xxl + theme.spacing.xs,
+      borderWidth: 1,
+      borderColor: theme.colors.neutral[300],
+      borderRadius: theme.borderRadius.lg,
+      marginBottom: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
+      backgroundColor: theme.colors.inputColor,
+      fontSize: theme.typography.fontSize.md,
+      fontFamily: theme.typography.fontFamily.regular,
+      color: theme.colors.text,
+    },
+  });
 
 export default CustomInput;

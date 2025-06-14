@@ -5,12 +5,18 @@ import ComponentsDemo from '../screens/ComponentsDemo.tsx';
 import {MainDrawer} from './HomeDrawerNavigator.tsx';
 import React from 'react';
 import {SCREEN_NAMES} from '../constants/routes.ts';
+import {useTheme} from '../state/ThemeContext.tsx';
 
 const Stack = createNativeStackNavigator();
 
 const AppStackNavigator = () => {
+  const {theme} = useTheme();
+
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}>
       <Stack.Screen name={SCREEN_NAMES.LOGIN} component={LogIn} />
       <Stack.Screen name={SCREEN_NAMES.SIGN_UP} component={SignUp} />
       <Stack.Screen name={SCREEN_NAMES.DEMO} component={ComponentsDemo} />

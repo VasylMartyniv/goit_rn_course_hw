@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -12,30 +12,20 @@ import {
   ParamListBase,
   useNavigation,
 } from '@react-navigation/native';
-import {Category} from '../state/TodoContext';
 import AddCategoryModal from './AddCategoryModal';
 import CustomDrawerItem from './CustomDrawerItem.tsx';
-import {theme} from '../styles/theme.ts';
+import {Theme} from '../styles/theme.ts';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SCREEN_NAMES} from '../constants/routes.ts';
-import {fetchCategories} from '../api/api.ts';
+import {useCategories} from '../hooks/hooks.ts';
+import {useTheme} from '../state/ThemeContext.tsx';
 
-const CustomDrawerContent = (props: any) => {
+const CustomDrawerContent = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const [categories, setCategories] = useState<Category[]>([]);
+  const categories = useCategories();
   const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await fetchCategories();
-        setCategories(data);
-      } catch (error) {
-        setCategories([]);
-      }
-    };
-    loadCategories();
-  }, []);
+  const {theme} = useTheme();
+  const styles = createStyles(theme);
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -53,7 +43,7 @@ const CustomDrawerContent = (props: any) => {
       </View>
       <View style={styles.drawerContent}>
         <ScrollView style={{width: '100%'}}>
-          {categories.map(category => (
+          {categories.map((category, i) => (
             <CustomDrawerItem
               key={category.id}
               onPress={() =>
@@ -106,55 +96,57 @@ const CustomDrawerContent = (props: any) => {
   );
 };
 
-const styles = StyleSheet.create({
-  drawerContainer: {
-    paddingStart: 0,
-    width: '100%',
-    paddingEnd: 0,
-  },
-  drawerHeader: {
-    padding: 16,
-    backgroundColor: theme.colors.white,
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  },
-  drawerHeaderText: {
-    fontSize: theme.typography.fontSize.xl,
-    fontFamily: theme.typography.fontFamily.bold,
-  },
-  drawerContent: {
-    flex: 1,
-    margin: 0,
-    borderRadius: 0,
-    width: '100%',
-    marginLeft: 0,
-    alignItems: 'flex-start',
-  },
-  addText: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.primary[500],
-    fontFamily: theme.typography.fontFamily.bold,
-    fontWeight: 600,
-  },
-  footer: {
-    marginTop: 'auto',
-    borderTopWidth: 1,
-    borderColor: theme.colors.neutral[300],
-    alignItems: 'center',
-  },
-  iconButton: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 8,
-    gap: 8,
-  },
-  logOutText: {
-    fontSize: theme.typography.fontSize.md,
-    color: theme.colors.error,
-    fontFamily: theme.typography.fontFamily.bold,
-    fontWeight: 600,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    drawerContainer: {
+      paddingStart: 0,
+      width: '100%',
+      paddingEnd: 0,
+    },
+    drawerHeader: {
+      padding: 16,
+      backgroundColor: theme.colors.backgroundLight,
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    },
+    drawerHeaderText: {
+      fontSize: theme.typography.fontSize.xl,
+      fontFamily: theme.typography.fontFamily.bold,
+      color: theme.colors.text,
+    },
+    drawerContent: {
+      flex: 1,
+      margin: 0,
+      borderRadius: 0,
+      width: '100%',
+      marginLeft: 0,
+      alignItems: 'flex-start',
+    },
+    addText: {
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.primary[500],
+      fontFamily: theme.typography.fontFamily.bold,
+      fontWeight: 600,
+    },
+    footer: {
+      marginTop: 'auto',
+      borderTopWidth: 1,
+      borderColor: theme.colors.borderColor,
+      alignItems: 'center',
+    },
+    iconButton: {
+      width: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      margin: 8,
+      gap: 8,
+    },
+    logOutText: {
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.error,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontWeight: 600,
+    },
+  });
 
 export default CustomDrawerContent;

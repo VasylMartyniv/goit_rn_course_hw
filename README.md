@@ -19,3 +19,7 @@ Navigators:
 ## HW-5
 Categories and Todos are loaded from JSON api server (db.json).
 ![demo3.jpg](demo3.jpeg)
+
+## HW-6
+Theme changes using Context API. All data in app is loaded from API and AsyncStorage using Redux.
+The example is in demo4.mp4 file.
