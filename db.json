@@ -1,19 +1,21 @@
 {
+  "categories": [
+    { "id": "1", "name": "Learning" },
+    { "id": "2", "name": "Development" },
+    { "id": "3", "name": "Deployment" },
+    { "id": "4", "name": "Testing" },
+    { "id": "5", "name": "Research" }
+  ],
   "todos": [
-    {
-      "id": 1,
-      "title": "Learn JavaScript",
-      "completed": false
-    },
-    {
-      "id": 2,
-      "title": "Build a web application",
-      "completed": false
-    },
-    {
-      "id": 3,
-      "title": "Deploy to production",
-      "completed": true
-    }
+    { "id": "101", "title": "Learn JavaScript", "categoryId": "1", "completed": false },
+    { "id": "102", "title": "Build a web application", "categoryId": "2", "completed": false },
+    { "id": "103", "title": "Deploy to production", "categoryId": "3", "completed": true },
+    { "id": "104", "title": "Write unit tests", "categoryId": "4", "completed": false },
+    { "id": "105", "title": "Explore TypeScript", "categoryId": "1", "completed": false },
+    { "id": "106", "title": "Refactor codebase", "categoryId": "2", "completed": false },
+    { "id": "107", "title": "Set up CI/CD", "categoryId": "3", "completed": false },
+    { "id": "108", "title": "Test API endpoints", "categoryId": "4", "completed": true },
+    { "id": "109", "title": "Read about React Native", "categoryId": "5", "completed": false },
+    { "id": "110", "title": "Research GraphQL", "categoryId": "5", "completed": false }
   ]
 }
