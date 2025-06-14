@@ -17,6 +17,7 @@ import AddCategoryModal from './AddCategoryModal';
 import CustomDrawerItem from './CustomDrawerItem.tsx';
 import {theme} from '../styles/theme.ts';
 import Icon from '@react-native-vector-icons/ionicons';
+import {SCREEN_NAMES} from '../constants/routes.ts';
 
 const CustomDrawerContent = (props: any) => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -27,7 +28,11 @@ const CustomDrawerContent = (props: any) => {
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.drawerHeader}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('MainApp', {screen: 'Home'})}
+          onPress={() =>
+            navigation.navigate(SCREEN_NAMES.MAIN_APP, {
+              screen: SCREEN_NAMES.HOME,
+            })
+          }
           style={{flexDirection: 'row', alignItems: 'center', gap: 16}}>
           <Icon name={'home'} size={32} color={theme.colors.primary[500]} />
           <Text style={styles.drawerHeaderText}>Home</Text>
@@ -39,8 +44,8 @@ const CustomDrawerContent = (props: any) => {
             <CustomDrawerItem
               key={category.id}
               onPress={() =>
-                navigation.navigate('MainApp', {
-                  screen: 'Category',
+                navigation.navigate(SCREEN_NAMES.MAIN_APP, {
+                  screen: SCREEN_NAMES.CATEGORY,
                   params: {
                     categoryId: category.id,
                     categoryName: category.name,
@@ -73,7 +78,7 @@ const CustomDrawerContent = (props: any) => {
           onPress={() => {
             navigation.reset({
               index: 0,
-              routes: [{name: 'LogIn'}],
+              routes: [{name: SCREEN_NAMES.LOGIN}],
             });
           }}>
           <Icon name={'exit'} color={theme.colors.error} size={32} />

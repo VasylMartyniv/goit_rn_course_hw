@@ -10,6 +10,7 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import {StyleSheet, View} from 'react-native';
 import {theme} from '../styles/theme';
+import {SCREEN_NAMES} from '../constants/routes.ts';
 
 const LogIn = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -19,7 +20,7 @@ const LogIn = () => {
   const handleLogin = () => {
     navigation.reset({
       index: 0,
-      routes: [{name: 'MainApp'}],
+      routes: [{name: SCREEN_NAMES.MAIN_APP}],
     });
   };
 
@@ -50,13 +51,13 @@ const LogIn = () => {
         <View style={{flexDirection: 'row', width: '100%'}}>
           <CustomButton
             title="Demo"
-            onPress={() => navigation.navigate('Demo')}
+            onPress={() => navigation.navigate(SCREEN_NAMES.DEMO)}
           />
         </View>
         <View style={styles.footerButton}>
           <CustomButton
             title="Sign Up"
-            onPress={() => navigation.navigate('SignUp')}
+            onPress={() => navigation.navigate(SCREEN_NAMES.SIGN_UP)}
           />
         </View>
       </View>

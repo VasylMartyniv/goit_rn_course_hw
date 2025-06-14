@@ -10,6 +10,7 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import {StyleSheet, View} from 'react-native';
 import {theme} from '../styles/theme';
+import {SCREEN_NAMES} from '../constants/routes.ts';
 
 const SignUp = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -19,7 +20,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSignUp = () => {
-    navigation.navigate('LogIn');
+    navigation.navigate(SCREEN_NAMES.LOGIN);
   };
 
   return (
@@ -58,7 +59,7 @@ const SignUp = () => {
         <View style={styles.footerButton}>
           <CustomButton
             title="Log In"
-            onPress={() => navigation.navigate('LogIn')}
+            onPress={() => navigation.navigate(SCREEN_NAMES.LOGIN)}
           />
         </View>
       </View>
