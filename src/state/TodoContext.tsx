@@ -1,25 +1,25 @@
 import React, {createContext, useContext, useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface TodoItem {
+export interface TodoItemType {
   id: string;
   title: string;
   categoryId: string;
   completed: boolean;
 }
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
 }
 
 interface TodoContextType {
-  todos: TodoItem[];
+  todos: TodoItemType[];
   categories: Category[];
   addTodo: (title: string, categoryId: string) => void;
   toggleTodo: (id: string) => void;
   addCategory: (name: string) => void;
-  getTodosByCategory: (categoryId: string) => TodoItem[];
+  getTodosByCategory: (categoryId: string) => TodoItemType[];
   deleteCategory: (id: string) => void;
   deleteTodo: (id: string) => void;
 }
@@ -29,7 +29,7 @@ const TodoContext = createContext<TodoContextType | undefined>(undefined);
 export const TodoProvider: React.FC<{children: React.ReactNode}> = ({
   children,
 }) => {
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [todos, setTodos] = useState<TodoItemType[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
 
   // Load data from AsyncStorage on mount

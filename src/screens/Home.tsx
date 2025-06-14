@@ -1,24 +1,61 @@
-import React, {useState} from 'react';
-import {FlatList, StyleSheet} from 'react-native';
-import {useTodo} from '../state/TodoContext';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, FlatList, StyleSheet, Text} from 'react-native';
+import {fetchCategories, fetchTodos} from '../api/api';
 import TodoItem from '../components/TodoItem';
-import AddCategoryModal from '../components/AddCategoryModal';
 import ScreenContainer from '../components/ScreenContainer';
 import SectionTitle from '../components/SectionTitle';
 import EmptyListMessage from '../components/EmptyListMessage';
+import {Category, TodoItemType} from '../state/TodoContext.tsx';
 
 const Home = () => {
-  const {todos, categories} = useTodo();
-  const [modalVisible, setModalVisible] = useState(false);
+  const [todos, setTodos] = useState<TodoItemType[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const [todosData, categoriesData] = await Promise.all([
+          fetchTodos(),
+          fetchCategories(),
+        ]);
+        setTodos(todosData);
+        setCategories(categoriesData);
+      } catch (err: any) {
+        setError(err.message || 'Error loading data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <ScreenContainer>
+        <ActivityIndicator size="large" />
+      </ScreenContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <ScreenContainer>
+        <Text style={{color: 'red'}}>{error}</Text>
+      </ScreenContainer>
+    );
+  }
 
   return (
     <ScreenContainer>
       <SectionTitle title="All Tasks" />
-
       {todos.length > 0 ? (
         <FlatList
           data={todos}
-          keyExtractor={item => item.id}
+          keyExtractor={item => item.id.toString()}
           renderItem={({item}) => (
             <TodoItem
               todo={item}
@@ -33,11 +70,6 @@ const Home = () => {
       ) : (
         <EmptyListMessage message="No tasks yet. Add some tasks to get started!" />
       )}
-
-      <AddCategoryModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-      />
     </ScreenContainer>
   );
 };

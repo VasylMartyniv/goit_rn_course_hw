@@ -15,3 +15,7 @@ Navigators:
  - MainStack (Login, SignUp, Demo, MainApp)
  - DrawerNavigator (Home, Category)
 ![demo2.jpg](demo2.jpg)
+
+## HW-5
+Categories and Todos are loaded from JSON api server (db.json).
+![demo3.jpg](demo3.jpeg)

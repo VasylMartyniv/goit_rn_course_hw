@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -12,17 +12,30 @@ import {
   ParamListBase,
   useNavigation,
 } from '@react-navigation/native';
-import {useTodo} from '../state/TodoContext';
+import {Category} from '../state/TodoContext';
 import AddCategoryModal from './AddCategoryModal';
 import CustomDrawerItem from './CustomDrawerItem.tsx';
 import {theme} from '../styles/theme.ts';
 import Icon from '@react-native-vector-icons/ionicons';
 import {SCREEN_NAMES} from '../constants/routes.ts';
+import {fetchCategories} from '../api/api.ts';
 
 const CustomDrawerContent = (props: any) => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const {categories} = useTodo();
+  const [categories, setCategories] = useState<Category[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await fetchCategories();
+        setCategories(data);
+      } catch (error) {
+        setCategories([]);
+      }
+    };
+    loadCategories();
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1}}>

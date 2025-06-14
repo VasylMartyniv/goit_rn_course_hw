@@ -1755,7 +1755,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNGestureHandler (2.25.0):
+  - RNGestureHandler (2.26.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2322,11 +2322,11 @@ SPEC CHECKSUMS:
   React-timing: 4e298a80e9a41c31d884df0422c9eb73a240ec0d
   React-utils: fbb79f805d13e0613bc1f799c7bbe5659a0d5ba9
   ReactAppDependencyProvider: e6d0c3c3cc9862a3ccef0c252835cd7ccb96313d
-  ReactCodegen: c2f2ec5dd32215237420bedebae0e66867e1e8ea
+  ReactCodegen: 5e17f94df1a2aa53cbaf7129598d0adbdd470016
   ReactCommon: e243aa261effc83c10208f0794bade55ca9ae5b6
   RNCAsyncStorage: a1c8cc8a99c32de1244a9cf707bf9d83d0de0f71
-  RNGestureHandler: ebef699ea17e7c0006c1074e1e423ead60ce0121
-  RNReanimated: 722d67dfde539bfe29b572878f4bc805f727726b
+  RNGestureHandler: c7986dd1eb909e329882af067c05db0702a659b3
+  RNReanimated: 56517f30e4690627bf58c0020af3454f09972020
   RNScreens: 482e9707f9826230810c92e765751af53826d509
   RNSVG: 8a1054afe490b5d63b9792d7ae3c1fde8c05cdd0
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
