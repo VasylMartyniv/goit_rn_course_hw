@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {useTheme} from '../state/ThemeContext.tsx';
 import {Theme} from '../styles/theme.ts';
@@ -26,4 +26,4 @@ const createStyles = (theme: Theme) =>
     },
   });
 
-export default SectionTitle;
+export default memo(SectionTitle);

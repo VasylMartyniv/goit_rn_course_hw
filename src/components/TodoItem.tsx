@@ -1,5 +1,10 @@
-import React from 'react';
+import React, {memo, useEffect, useMemo} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import {useAppDispatch} from '../hooks/hooks.ts';
 import {deleteTodo, toggleTodo} from '../state/todosSlice.ts';
 import {useTheme} from '../state/ThemeContext.tsx';
@@ -17,46 +22,95 @@ interface TodoItemProps {
 const TodoItem = ({todo, categoryName}: TodoItemProps) => {
   const dispatch = useAppDispatch();
   const {theme} = useTheme();
-  const styles = createStyles(theme);
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
-  return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={[styles.checkbox, todo.completed && styles.checkboxChecked]}
-        onPress={() => dispatch(toggleTodo(todo.id))}>
-        {todo.completed && <Text style={styles.checkmark}>✓</Text>}
-      </TouchableOpacity>
+  // Initialize with current completion state
+  const completionProgress = useSharedValue(todo.completed ? 100 : 0);
 
-      <View style={styles.textContainer}>
-        <Text style={[styles.title, todo.completed && styles.completedTitle]}>
-          {todo.title}
-        </Text>
-        {categoryName && <Text style={styles.category}>{categoryName}</Text>}
-      </View>
+  useEffect(() => {
+    // Update with animation when completed state changes
+    completionProgress.value = withTiming(todo.completed ? 100 : 0, {
+      duration: 500, // Slightly longer duration to make it more noticeable
+    });
+  }, [todo.completed, completionProgress]);
 
+  // Define animated style with explicit width calculation
+  const animatedBackgroundStyle = useAnimatedStyle(() => {
+    return {
+      width: `${completionProgress.value}%`,
+      opacity: 0.8, // Make it more visible
+    };
+  });
+
+  const button = useMemo(
+    () => (
       <TouchableOpacity
         style={styles.deleteButton}
         onPress={() => dispatch(deleteTodo(todo.id))}>
         <Text style={styles.deleteText}>×</Text>
       </TouchableOpacity>
+    ),
+    [dispatch, styles.deleteButton, styles.deleteText, todo.id],
+  );
+
+  const category = useMemo(
+    () => <Text style={styles.category}>{categoryName}</Text>,
+    [categoryName, styles.category],
+  );
+
+  return (
+    <View style={styles.outerContainer}>
+      <Animated.View
+        style={[styles.completionBackground, animatedBackgroundStyle]}
+      />
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={[styles.checkbox, todo.completed && styles.checkboxChecked]}
+          onPress={() => dispatch(toggleTodo(todo.id))}>
+          {todo.completed && <Text style={styles.checkmark}>✓</Text>}
+        </TouchableOpacity>
+
+        <View style={styles.textContainer}>
+          <Text style={[styles.title, todo.completed && styles.completedTitle]}>
+            {todo.title}
+          </Text>
+          {category}
+        </View>
+        {button}
+      </View>
     </View>
   );
 };
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    outerContainer: {
+      position: 'relative',
+      marginBottom: theme.spacing.sm,
+      borderRadius: theme.borderRadius.md,
+      overflow: 'hidden',
+    },
+    completionBackground: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      height: '100%', // Ensure it fills the container height
+      backgroundColor: theme.colors.primary[100], // Use a more visible color
+      zIndex: 1,
+    },
     container: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: theme.colors.backgroundLight,
+      backgroundColor: 'transparent', // Make transparent to see the background
       borderRadius: theme.borderRadius.md,
-      marginBottom: theme.spacing.sm,
       padding: theme.spacing.md,
       shadowColor: theme.colors.black,
       shadowOffset: {width: 0, height: 1},
       shadowOpacity: 0.1,
       shadowRadius: 2,
       elevation: 2,
+      zIndex: 2,
     },
     checkbox: {
       width: theme.spacing.lg,
@@ -103,4 +157,4 @@ const createStyles = (theme: Theme) =>
     },
   });
 
-export default TodoItem;
+export default memo(TodoItem);

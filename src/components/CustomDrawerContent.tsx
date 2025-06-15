@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -25,7 +25,7 @@ const CustomDrawerContent = () => {
   const categories = useCategories();
   const [modalVisible, setModalVisible] = useState(false);
   const {theme} = useTheme();
-  const styles = createStyles(theme);
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   return (
     <SafeAreaView style={{flex: 1}}>
