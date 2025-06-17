@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {
   Modal,
   StyleSheet,
@@ -12,6 +12,7 @@ import {Theme} from '../styles/theme';
 import {useAppDispatch} from '../hooks/hooks.ts';
 import {addCategory} from '../state/categoriesSlice.ts';
 import {useTheme} from '../state/ThemeContext.tsx';
+import {SessionContext} from '../state/SessionContext.tsx';
 
 interface AddCategoryModalProps {
   visible: boolean;
@@ -21,12 +22,16 @@ interface AddCategoryModalProps {
 const AddCategoryModal = ({visible, onClose}: AddCategoryModalProps) => {
   const [categoryName, setCategoryName] = useState('');
   const dispatch = useAppDispatch();
+  const {session} = useContext(SessionContext);
   const {theme} = useTheme();
   const styles = createStyles(theme);
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (categoryName.trim()) {
-      dispatch(addCategory(categoryName.trim()));
+      const res = await dispatch(
+        addCategory({name: categoryName.trim(), user_id: session?.user.id}),
+      );
+      console.log(res);
       setCategoryName('');
       onClose();
     }

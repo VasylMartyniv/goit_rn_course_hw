@@ -12,26 +12,40 @@ import {StyleSheet, View} from 'react-native';
 import {Theme} from '../styles/theme';
 import {SCREEN_NAMES} from '../constants/routes.ts';
 import {useTheme} from '../state/ThemeContext.tsx';
+import supabase from '../state/supabase.ts';
+import Toast from 'react-native-toast-message';
 
 const SignUp = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
   const {theme} = useTheme();
   const styles = createStyles(theme);
 
-  const handleSignUp = () => {
-    navigation.navigate(SCREEN_NAMES.LOGIN);
+  const handleSignUp = async () => {
+    setLoading(true);
+    const {error} = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    setLoading(false);
+    if (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Signup Failed',
+        text2: error.message,
+      });
+      return;
+    }
   };
 
   return (
     <ScreenContainer>
       <View style={styles.formContainer}>
         <SectionTitle title="Create Account" />
-
-        <CustomInput placeholder="Name" value={name} onChangeText={setName} />
 
         <CustomInput
           placeholder="Email"
@@ -56,7 +70,11 @@ const SignUp = () => {
         />
 
         <View style={{flexDirection: 'row'}}>
-          <CustomButton title="Sign Up" onPress={handleSignUp} />
+          <CustomButton
+            title="Sign Up"
+            onPress={handleSignUp}
+            isLoading={loading}
+          />
         </View>
 
         <View style={styles.footerButton}>

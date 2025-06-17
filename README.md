@@ -1,38 +1,34 @@
-## HW-3
+### Впроваджено:
+1) Аутентифікація користувачів
+   - Додано реєстрацію та логін через Supabase Auth.
+   - Реалізовано перевірку email + пароль, з обробкою помилок.
+2) Збереження та отримання даних
+   - Усі завдання та категорії тепер зберігаються у базі даних Supabase.
+   - При вході користувача застосунок автоматично підтягує відповідні дані з бази.
+   - Додавання, оновлення, видалення завдань синхронізуються з Supabase в режимі реального часу.
+3) Прив’язка даних до користувача
+   - Кожен запис (завдання або категорія) містить user_id, що дозволяє відображати тільки персональні дані користувача.
+### Логіка прийнятих рішень
+#### Чому Supabase?
+- Простота інтеграції з React Native (через REST або client SDK).
+- Хостинг, БД, аутентифікація в одному рішенні.
+- Безпечне зберігання даних без складної конфігурації бекенду.
+#### Основні міркування:
+- Масштабованість — зберігання в Supabase дозволяє працювати з даними з будь-якого пристрою.
+Безпека — кожен користувач має доступ лише до своїх завдань.
+- Синхронізація — оновлення даних у реальному часі при кожній дії (створення, завершення, видалення).
+- Простота локальної логіки — React-сторона відповідає лише за відображення й виклики до Supabase.
+#### Переваги для користувача:
+- Не потрібно зберігати дані локально чи втрачати їх після виходу.
+- Можливість увійти з будь-якого пристрою та отримати свої завдання.
+- Проста реєстрація та безпечне зберігання персональних списків справ.
 
-Custom components for reusability:
- - ScreenContainer
- - SectionTitle
- - TodoItem
- - CustomInput
- - CustomButton
- - CustomDrawerItem
-![demo.jpg](demo.jpg)
-
-## HW-4
-Screens: Login, SignUp, Demo, MainApp, Home, Category.
-Navigators: 
- - MainStack (Login, SignUp, Demo, MainApp)
- - DrawerNavigator (Home, Category)
-![demo2.jpg](demo2.jpg)
-
-## HW-5
-Categories and Todos are loaded from JSON api server (db.json).
-![demo3.jpg](demo3.jpeg)
-
-## HW-6
-Theme changes using Context API. All data in app is loaded from API and AsyncStorage using Redux.
-The example is in demo4.mp4 file.
-
-## HW-7
-Todo completion animation was implemented using React Native Reanimated.
-example can be found in demo7_1.mp4 file in the repo
-
-The todo item component and the list are optimized using React.memo and useCallback.
-![demo7_2.jpeg](demo7_2.jpeg)
-
-Heavy momentjs library was replaced with dayjs, this resulted in 0.13 MB size reduction for bundle. Screenshots:
-1) Before momentjs removal
-2) After momentjs removal
-3) After dayjs addition
-![demo7_3.jpeg](demo7_3.jpeg)
+### Екрани застосунку
+#### Екрани авторизації та реєстрації:
+![demo1.jpeg](demo1.jpeg)
+#### Домашній екран без завдань, бокове меню, та модальне вікно додавання категорії:
+![demo2.jpeg](demo2.jpeg)
+#### Бокове меню з категоріями, екран категорії з завданнями:
+![demo3.jpeg](demo3.jpeg)
+#### Екран додавання завдання:
+![demo4.jpeg](demo4.jpeg)

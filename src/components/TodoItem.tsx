@@ -54,7 +54,8 @@ const TodoItem = ({todo, categoryName}: TodoItemProps) => {
   );
 
   const category = useMemo(
-    () => <Text style={styles.category}>{categoryName}</Text>,
+    () =>
+      categoryName ? <Text style={styles.category}>{categoryName}</Text> : null,
     [categoryName, styles.category],
   );
 
@@ -66,7 +67,9 @@ const TodoItem = ({todo, categoryName}: TodoItemProps) => {
       <View style={styles.container}>
         <TouchableOpacity
           style={[styles.checkbox, todo.completed && styles.checkboxChecked]}
-          onPress={() => dispatch(toggleTodo(todo.id))}>
+          onPress={() =>
+            dispatch(toggleTodo({id: todo.id, completed: !todo.completed}))
+          }>
           {todo.completed && <Text style={styles.checkmark}>✓</Text>}
         </TouchableOpacity>
 

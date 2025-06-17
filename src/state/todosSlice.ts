@@ -1,67 +1,94 @@
-import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {fetchTodos} from '../api/api.ts';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import supabase from './supabase.ts';
 
 export interface TodoItemType {
   id: string;
   title: string;
   categoryId: string;
   completed: boolean;
+  user_id?: string;
 }
 
-export const getTodos = createAsyncThunk('todos/fetchTodos', async () => {
-  const storedTodos = await AsyncStorage.getItem('todos');
-  const remoteTodos = (await fetchTodos()) as TodoItemType[];
-  return [...(storedTodos ? JSON.parse(storedTodos) : []), ...remoteTodos];
-});
+export const getTodos = createAsyncThunk(
+  'todos/fetchTodos',
+  async (user_id: string) => {
+    const {data, error} = await supabase
+      .from('todos')
+      .select('*')
+      .eq('user_id', user_id);
 
-export const saveTodos = createAsyncThunk(
-  'todos/saveTodos',
-  async (todo: TodoItemType) => {
-    const storedTodos = JSON.parse((await AsyncStorage.getItem('todos')) || '');
-    const newTodos = [...storedTodos, todo];
-    await AsyncStorage.setItem('todos', JSON.stringify(newTodos));
-    return newTodos;
+    if (error) {
+      console.error('Error fetching todos:', error);
+      return [];
+    }
+    return data as TodoItemType[];
+  },
+);
+
+export const addTodo = createAsyncThunk(
+  'todos/addTodo',
+  async (todo: Omit<TodoItemType, 'id'>) => {
+    const {data, error} = await supabase.from('todos').insert([todo]).select();
+    if (error) throw error;
+    return data?.[0] as TodoItemType;
+  },
+);
+
+export const deleteTodo = createAsyncThunk(
+  'todos/deleteTodo',
+  async (id: string) => {
+    const {error} = await supabase.from('todos').delete().eq('id', id);
+    if (error) throw error;
+    return id;
+  },
+);
+
+export const toggleTodo = createAsyncThunk(
+  'todos/toggleTodo',
+  async ({id, completed}: {id: string; completed: boolean}) => {
+    const {data, error} = await supabase
+      .from('todos')
+      .update({completed})
+      .eq('id', id)
+      .select();
+    if (error) throw error;
+    return data?.[0] as TodoItemType;
+  },
+);
+
+export const deleteByCategory = createAsyncThunk(
+  'todos/deleteByCategory',
+  async (categoryId: string) => {
+    const {error} = await supabase
+      .from('todos')
+      .delete()
+      .eq('categoryId', categoryId);
+    if (error) throw error;
+    return categoryId;
   },
 );
 
 const todosSlice = createSlice({
   name: 'todos',
   initialState: [] as TodoItemType[],
-  reducers: {
-    addTodo: (
-      state,
-      action: PayloadAction<{title: string; categoryId: string}>,
-    ) => {
-      const newTodo: TodoItemType = {
-        id: Date.now().toString(),
-        title: action.payload.title,
-        categoryId: action.payload.categoryId,
-        completed: false,
-      };
-      state.push(newTodo);
-      saveTodos(newTodo);
-    },
-    toggleTodo: (state, action: PayloadAction<string>) => {
-      const todo = state.find(todo => todo.id === action.payload);
-      if (todo) {
-        todo.completed = !todo.completed;
-      }
-    },
-    deleteTodo: (state, action: PayloadAction<string>) => {
-      return state.filter(todo => todo.id !== action.payload);
-    },
-    deleteByCategory: (state, action: PayloadAction<string>) => {
-      return state.filter(todo => todo.categoryId !== action.payload);
-    },
-  },
+  reducers: {},
   extraReducers: builder => {
-    builder.addCase(getTodos.fulfilled, (state, action) => {
-      return action.payload;
-    });
+    builder
+      .addCase(getTodos.fulfilled, (_, action) => action.payload)
+      .addCase(addTodo.fulfilled, (state, action) => {
+        if (action.payload) state.push({...action.payload});
+      })
+      .addCase(deleteTodo.fulfilled, (state, action) => {
+        return state.filter(todo => todo.id !== action.payload);
+      })
+      .addCase(toggleTodo.fulfilled, (state, action) => {
+        const idx = state.findIndex(todo => todo.id === action.payload.id);
+        if (idx !== -1) state[idx] = action.payload;
+      })
+      .addCase(deleteByCategory.fulfilled, (state, action) => {
+        return state.filter(todo => todo.categoryId !== action.payload);
+      });
   },
 });
 
-export const {addTodo, toggleTodo, deleteTodo, deleteByCategory} =
-  todosSlice.actions;
 export default todosSlice.reducer;

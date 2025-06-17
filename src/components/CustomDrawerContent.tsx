@@ -19,6 +19,7 @@ import Icon from '@react-native-vector-icons/ionicons';
 import {SCREEN_NAMES} from '../constants/routes.ts';
 import {useCategories} from '../hooks/hooks.ts';
 import {useTheme} from '../state/ThemeContext.tsx';
+import supabase from '../state/supabase.ts';
 
 const CustomDrawerContent = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -26,6 +27,13 @@ const CustomDrawerContent = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const {theme} = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const handleLogOut = async () => {
+    const {error} = await supabase.auth.signOut();
+    if (error) {
+      console.error('Error logging out:', error.message);
+    }
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -43,7 +51,7 @@ const CustomDrawerContent = () => {
       </View>
       <View style={styles.drawerContent}>
         <ScrollView style={{width: '100%'}}>
-          {categories.map((category, i) => (
+          {categories.map(category => (
             <CustomDrawerItem
               key={category.id}
               onPress={() =>
@@ -76,14 +84,7 @@ const CustomDrawerContent = () => {
       </View>
 
       <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{name: SCREEN_NAMES.LOGIN}],
-            });
-          }}>
+        <TouchableOpacity style={styles.iconButton} onPress={handleLogOut}>
           <Icon name={'exit'} color={theme.colors.error} size={32} />
           <Text style={styles.logOutText}>Log Out</Text>
         </TouchableOpacity>

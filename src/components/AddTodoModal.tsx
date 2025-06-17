@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {Modal, StyleSheet, Text, View} from 'react-native';
 import CustomInput from './CustomInput';
 import CustomButton from './CustomButton';
@@ -6,6 +6,7 @@ import {useAppDispatch} from '../hooks/hooks.ts';
 import {addTodo} from '../state/todosSlice.ts';
 import {useTheme} from '../state/ThemeContext.tsx';
 import {Theme} from '../styles/theme.ts';
+import {SessionContext} from '../state/SessionContext.tsx';
 
 interface AddTodoModalProps {
   visible: boolean;
@@ -16,12 +17,20 @@ interface AddTodoModalProps {
 const AddTodoModal = ({visible, onClose, categoryId}: AddTodoModalProps) => {
   const [todoTitle, setTodoTitle] = useState('');
   const dispatch = useAppDispatch();
+  const {session} = useContext(SessionContext);
   const {theme} = useTheme();
   const styles = createStyles(theme);
 
   const handleAddTodo = () => {
     if (todoTitle.trim()) {
-      dispatch(addTodo({title: todoTitle.trim(), categoryId}));
+      dispatch(
+        addTodo({
+          title: todoTitle.trim(),
+          categoryId,
+          completed: false,
+          user_id: session?.user.id,
+        }),
+      );
       setTodoTitle('');
       onClose();
     }

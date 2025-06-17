@@ -1,5 +1,10 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {Theme} from '../styles/theme';
 import {useTheme} from '../state/ThemeContext.tsx';
 
@@ -8,6 +13,7 @@ interface CustomButtonProps {
   onPress: () => void;
   variant?: 'primary' | 'secondary';
   style?: object;
+  isLoading?: boolean;
 }
 
 const CustomButton = ({
@@ -15,6 +21,7 @@ const CustomButton = ({
   onPress,
   variant = 'primary',
   style,
+  isLoading = false,
 }: CustomButtonProps) => {
   const {theme} = useTheme();
   const styles = createStyles(theme);
@@ -26,14 +33,18 @@ const CustomButton = ({
         style,
       ]}
       onPress={onPress}>
-      <Text
-        style={
-          variant === 'primary'
-            ? styles.primaryButtonText
-            : styles.secondaryButtonText
-        }>
-        {title}
-      </Text>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <Text
+          style={
+            variant === 'primary'
+              ? styles.primaryButtonText
+              : styles.secondaryButtonText
+          }>
+          {title}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };

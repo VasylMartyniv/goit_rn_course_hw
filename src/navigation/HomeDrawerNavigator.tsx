@@ -10,6 +10,7 @@ const Drawer = createDrawerNavigator();
 
 export const MainDrawer = () => {
   const {theme} = useTheme();
+
   return (
     <Drawer.Navigator
       drawerContent={CustomDrawerContent}

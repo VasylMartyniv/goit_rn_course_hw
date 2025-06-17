@@ -10,22 +10,34 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import {StyleSheet, View} from 'react-native';
 import {SCREEN_NAMES} from '../constants/routes.ts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Theme} from '../styles/theme.ts';
 import {useTheme} from '../state/ThemeContext.tsx';
+import supabase from '../state/supabase.ts';
+import Toast from 'react-native-toast-message';
 
 const LogIn = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const {theme, toggleTheme} = useTheme();
-  const styles = createStyles(theme);
+  const [loading, setLoading] = useState(false);
+  const {toggleTheme} = useTheme();
+  const styles = createStyles();
 
-  const handleLogin = () => {
-    navigation.reset({
-      index: 0,
-      routes: [{name: SCREEN_NAMES.MAIN_APP}],
+  const handleLogin = async () => {
+    setLoading(true);
+    const {error} = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
+
+    setLoading(false);
+    if (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Login Failed',
+        text2: error.message,
+      });
+      return;
+    }
   };
 
   return (
@@ -49,18 +61,22 @@ const LogIn = () => {
         />
 
         <View style={{flexDirection: 'row', width: '100%'}}>
-          <CustomButton title="Log In" onPress={handleLogin} />
-        </View>
-
-        <View style={{flexDirection: 'row', width: '100%'}}>
           <CustomButton
-            title="Demo"
-            onPress={() => {
-              AsyncStorage.clear();
-              navigation.navigate(SCREEN_NAMES.DEMO);
-            }}
+            title="Log In"
+            onPress={handleLogin}
+            isLoading={loading}
           />
         </View>
+
+        {/*<View style={{flexDirection: 'row', width: '100%'}}>*/}
+        {/*  <CustomButton*/}
+        {/*    title="Demo"*/}
+        {/*    onPress={() => {*/}
+        {/*      AsyncStorage.clear();*/}
+        {/*      navigation.navigate(SCREEN_NAMES.DEMO);*/}
+        {/*    }}*/}
+        {/*  />*/}
+        {/*</View>*/}
 
         <View style={{flexDirection: 'row', width: '100%'}}>
           <CustomButton title="Toggle Theme" onPress={toggleTheme} />
@@ -76,7 +92,7 @@ const LogIn = () => {
   );
 };
 
-const createStyles = (theme: Theme) =>
+const createStyles = () =>
   StyleSheet.create({
     formContainer: {
       flex: 1,
